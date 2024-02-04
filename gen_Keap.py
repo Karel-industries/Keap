@@ -63,7 +63,7 @@ class Keap:
     def write_file():
         with open(Keap.file, "w") as f:
             for line in Keap.data:
-                f.write(f"{';'.join(line)}\n")
+                f.write(f"{','.join(line)}\n")
 
 
 Keap.gen_Keap()

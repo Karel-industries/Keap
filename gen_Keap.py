@@ -63,7 +63,10 @@ class Keap:
     def write_file():
         with open(Keap.file, "w") as f:
             for line in Keap.data:
-                f.write(f"{','.join(line)}\n")
+                if len(line)==5:
+                    f.write(f"{','.join(line)}\n")
+                else:
+                    f.write(f"{','.join(line)}, \n")
 
 
 Keap.gen_Keap()

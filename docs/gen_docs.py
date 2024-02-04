@@ -14,7 +14,10 @@ class Keap:
             Keap._csv_lines.pop(0)  # remove first line
 
         for line in Keap._csv_lines:
-            Keap._csv_data.append(line.lstrip().rstrip().split(";"))
+            tmp = line.lstrip().rstrip().split(",")
+            if tmp[4] == "":
+                tmp.pop()
+            Keap._csv_data.append(tmp)
 
 
 class Utils:

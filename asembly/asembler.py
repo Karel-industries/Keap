@@ -118,6 +118,7 @@ except:
     print("Usage:")
     print("python3 asembler.py <Keap CSV file> <ASM file> <KPU .K99 file>")
     print("python3 asembler.py ../KeapV1.csv test.asm KPUv1b.24-main.K99")
+    exit()
 
 
 print(f"ASM file: {ASM.file}")

@@ -9,10 +9,12 @@ import config;
 auto newLine = regex("[\\r\\n]");
 auto whiteSpace = regex("\\s+");
 
+auto nonary = regex("^[0-8]{3}$");
+
 /////////////////
 // ACTUAL CODE //
 /////////////////
-string[] convertToKytes (string[] code, string fileName) {
+string[] convertToKytes (string[] code) {
    bool inMacro = false;
    string[] output = [];
 
@@ -50,6 +52,16 @@ string[] convertToKytes (string[] code, string fileName) {
                   output ~= "000";
                break;
 
+            case ".data":
+               if (tokens[1][0] == 'd') {
+                  string s = to!string(to!int(tokens[1][1..$]), 9);
+                  for (int j = 0; j < 2 - s.length; j++)
+                     s = "0" ~ s;
+                  output ~= s;
+               } else
+                  output ~= tokens[1][1..$];
+               break;
+
             default: break;
          }
       }
@@ -82,6 +94,24 @@ void syntaxCheck(string[] tokens, int line, string fileName) {
          if (!tokens[1].isNumeric || to!int(tokens[1]) <= 0)
             wrongArgs(".PADDING", line, fileName);
 
+         break;
+
+      case ".data":
+         if (tokens.length != 2)
+            wrongArgNum(".DATA", line, fileName);
+
+         if (tokens[1].length >= 2) {
+            if (tokens[1][0] == 'd' && tokens[1][1..$].isNumeric
+            && !(tokens[1][1] == '0' && tokens[1] != "d0")){
+               int i = to!int(tokens[1][1..$]);
+               if (i >= 0 && i <= 728)
+                  return;
+            }
+            else if (tokens[1][0] == 'n' && tokens[1][1..$].match(nonary))
+               return;
+         }
+
+         wrongArgs(".DATA", line, fileName);
          break;
 
       case "drl", "drr", "uinc", "udec": // #ONE

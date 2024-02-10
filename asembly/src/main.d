@@ -152,7 +152,7 @@ int main(string[] args) {
       displayFile(code, showNumbers, fromZero, inputFile);
 
    try 
-      code = convertToKytes(code, inputFile);
+      code = convertToKytes(code);
    catch (Exception e) {
       writeln("Error: " ~ e.message);
       return 1;

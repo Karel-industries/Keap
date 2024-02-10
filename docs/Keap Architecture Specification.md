@@ -106,41 +106,27 @@ halt
 
 The suffix syntax is modelled after the `arm` arch. add these behind a conditional instruction to specify the condition
 
-| Condition code | Meaning |
+| Condition code | Condition id | Meaning |
 | ---- | ---- |
-| `eq` | Equal |
-| `ne` | Not Equal |
-| `nz` | Not Zero |
-| `iz` | Zero |
-| `of` | Overflow |
-| `uf` | Underflow |
-| `nf` | Normalflow |
-| `gt` | Greter than |
-| `lt` | Lesser than |
-| `ge` | Greter or equal |
-| `le` | Lesser or equal |
+| `eq` | `0` | Equal |
+| `iz` | `1` | Zero |
+| `of` | `2` | Overflow |
+| `uf` | `3` | Underflow |
+| `nf` | `4` | Normalflow |
+| `gt` | `5` | Greter than |
+| `lt` | `6` | Lesser than |
+| `ge` | `7` | Greter or equal |
+| `le` | `8` | Lesser or equal |
 
-This instruction group implements *Conditional Bits* together with conventional *unconditional* branching/jumping instructions.
-
-> [!note]
-> if you need non-linking branching use a `wll` or any of the other write operations to register `r4`/`pc` 
+This instruction group implements *Conditional Bits* together with some Karel Control instructions.
 
 | iid | name | description |
 | ---- | ---- | ---- |
-| `0` | `bl` | Linked Branch to routine in reg. Saves origin routine address + 1 to `r3` |
-|  | `sbl` | Swapping Linked Branch. Branches to routine in `r3` while saving the origin routine address + 1 to `r3`. |
 |  | `ce` | Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is not** met. |
-|  | `de` | Conditional Disable. Disables *Execute* stage of the CPU Pipeline if the condition **is** met. |
+|  | `ice` | Inverse Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is** met. |
 |  | `re` | Resume Execution. Resumes *Execute* stage if it is currently Conditionally disabled, otherwise no-op. |
-|  | `halt` |  |
+|  | `halt` | Halt Execution. Stops Karel's Execution loop and exists the `==BOOT==` function |
 |  | `fault` |  |
-
-#### Control Instructions
-
-Instructions for controlling code flow and the CPU.
-
-- `halt`
-- `fault`
 
 ---
 ### Faults (`STOPs`)

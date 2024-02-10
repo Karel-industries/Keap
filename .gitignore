@@ -1,2 +1,12 @@
 .obsidian
 *.K99
+
+# objects
+*.o
+
+# executables
+keap
+keap.exe
+
+# experiments with generation
+*.bak

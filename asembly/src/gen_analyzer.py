@@ -1,5 +1,7 @@
 #!/bin/python3
 
+import re
+
 ############
 # GET DATA #
 ############
@@ -51,8 +53,9 @@ for dat in data:
         if dat["r1"] != prev_reg:
             if prev_reg != "":
                 eval_code += "         }\n"
-            eval_code    += f"         if (tokens.canFind(\"r{dat['r1']}\")) {{\n"
-            prev_reg = dat["r1"]
+            eval_code     += f"         if (tokens.canFind(\"r{dat['r1']}\")) {{\n" #}} for editor ourpses
+            prev_reg = dat["r1"]                                                    # also WTF it that escape
+
 
     # second
         eval_code += f"            if (tokens.canFind(\"r{dat['r2']}\"))\n" + \
@@ -65,8 +68,46 @@ eval_code = eval_code[13:] + "      break;\n"
 new_code = analyzer.split("// #BEGIN")[0] + "// #BEGIN\n" \
                     + eval_code + "// #END" + analyzer.split("// #END")[1]
 
+######################
+# GET SYNTAX CHECKER #
+######################
+
+prev_name = data[0]["name"]
+mode = "different"
+
+instrs = {
+        "one": [],
+        "different": [],
+        "non_different": [],
+        }
+
+# sort based on arguments
+for i, dat in enumerate(data):
+    if prev_name != dat["name"]:
+        instrs[mode].append(f"\"{data[i-1]['name']}\"")
+        prev_name = dat["name"]
+        mode = "different"
+
+    if dat["r2"] == "":
+        mode = "one"
+
+    elif dat["r1"] == dat["r2"]:
+        mode = "non_different"
+
+instrs[mode].append(f"\"{data[-1]['name']}\"")
+
+# insert
+new_code = re.sub("case .*?: // #ONE",
+                  "case " + ", ".join(instrs["one"]) + ": // #ONE",
+                  new_code)
+
+new_code = re.sub("case .*?: // #DIFFERENT",
+                  "case " + ", ".join(instrs["different"]) + ": // #DIFFERENT",
+                  new_code)
+
+new_code = re.sub("case .*?: // #NON_DIFFERENT",
+                  "case " + ", ".join(instrs["non_different"]) + ": // #NON_DIFFERENT",
+                  new_code)
 # write new code
 with open("analyzer.d", "w") as f:
     f.write(new_code)
-
-# print(new_code)

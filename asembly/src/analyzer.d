@@ -84,15 +84,29 @@ void syntaxCheck(string[] tokens, int line, string fileName) {
 
          break;
 
-      case "swp":
+      case "drl", "drr", "uinc", "udec": // #ONE
+         if (tokens.length != 2)
+            wrongArgNum(tokens[0], line, fileName);
+
+         if (!registers.canFind(tokens[1]))
+            wrongArgs(tokens[0], line, fileName);
+         break;
+
+      case "swp", "wll", "wlr", "wrl", "usub", "umul", "udiv": // #DIFFERENT
          if (tokens.length != 3)
-            wrongArgNum("swp", line, fileName);
+            wrongArgNum(tokens[0], line, fileName);
 
          if (!registers.canFind(tokens[1]) || !registers.canFind(tokens[2])
-               || tokens[1] == tokens[2]) {
-            writeln(tokens);
-            wrongArgs("swp", line, fileName);
-         }
+               || tokens[1] == tokens[2])
+            wrongArgs(tokens[0], line, fileName);
+         break;
+
+      case "uadd": // #NON_DIFFERENT
+         if (tokens.length != 3)
+            wrongArgNum(tokens[0], line, fileName);
+
+         if (!registers.canFind(tokens[1]) || !registers.canFind(tokens[2]))
+            wrongArgs(tokens[0], line, fileName);
          break;
 
       default:

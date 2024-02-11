@@ -40,6 +40,7 @@ class Keap:
                     Keap.instructions[line[2]][f"{line[6]}"] = Utils.gen_kyte(line[0], line[1])
                 else:
                     Keap.instructions[line[2]][f"{Keap.conditions[int(line[5])]} {line[6]}"] = Utils.gen_kyte(line[0], line[1])
+
             elif line[3] == "" and not line[4] == "": # no reg1 but has reg2
                 pass
             elif not line[3] == "" and line[4] == "": # has reg1 but no reg2
@@ -74,7 +75,10 @@ class ASM:
 
         for line in ASM.lines:
             toks = line.split(" ", 1) # ["uadd", "r0 r0"]
-            ASM.program.append(Keap.instructions[toks[0]][toks[1]])
+            if len(toks) == 2:
+                ASM.program.append(Keap.instructions[toks[0]][toks[1]])
+            else:
+                ASM.program.append(Keap.instructions[toks[0]][""])
 
 
 

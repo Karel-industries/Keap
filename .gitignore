@@ -9,5 +9,8 @@ main
 keap
 keap.exe
 
+# KPU file
+*.K99
+
 # experiments with generation
 *.bak

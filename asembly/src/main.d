@@ -1,7 +1,8 @@
 import std.stdio;
-import std.file;
 import std.string;
 import std.uni;
+import std.file;
+import std.utf;
 
 import expansion;
 import output;
@@ -19,12 +20,16 @@ string outputFile = "";
 bool showNonary = false;
 bool showMap = false;
 
+string kpuFile = "KPU.K99";
+
 string help = "Keap: Karel Extensible Aggressively Packed Architecture for KPU
 
 USAGE:
   keap [options] <filename> [output-filename]
 
 FLAGS:
+  -k, --kpu           sets input KPU file (default ./KPU.K99)
+
   -t, --text          Shows compiled binary in text format
   -m, --map           Show contents of compiled binary
   -n, --numbers       Shows line/column numbers
@@ -44,7 +49,8 @@ int main(string[] args) {
       writeln(help);
       return 1;
    }
-   foreach (arg; args[1..$]) {
+   for (int i = 1; i < args.length; i++) {
+      string arg = args[i];
       if (arg[0] != '-' || arg.length == 1 || arg == "--") {
          if (inputFile == "") {
             inputFile = arg;
@@ -62,6 +68,13 @@ int main(string[] args) {
 
       if (arg[1] == '-')
          switch (arg[2..$]) {
+            case "kpu":
+               if (i + 1 == args.length) {
+                  writeln("-k needs a file");
+                  return 1;
+               }
+               kpuFile = args[++i];
+               break;
             case "text":
                showNonary = true;
                break;
@@ -91,6 +104,13 @@ int main(string[] args) {
       else
          foreach (flag; arg[1..$])
             switch (flag) {
+               case 'k':
+                  if (i + 1 == args.length) {
+                     writeln("-k needs a file");
+                     return 1;
+                  }
+                  kpuFile = args[++i];
+                  break;
                case 't':
                   showNonary = true;
                   break;
@@ -124,15 +144,26 @@ int main(string[] args) {
    /////////////////////
    // File Extraction //
    /////////////////////
-   string contents = cast(string)read(inputFile);
-   if (contents.strip == "") {
+   // try read input file
+   string inputContents;
+   try {
+      inputContents = inputFile.readText.strip;
+   } catch (FileException) {
+      writeln("File " ~ inputFile ~ " could not be read");
+      return 1;
+   } catch (UTFException) {
+      writeln("Problems while decoding file " ~ inputFile);
+      return 1;
+   }
+
+   if (inputContents == "") {
       writeln("Input file is empty, nothing to do");
       return 0;
    }
 
    string[] code;
    try 
-      code = expandMacros(contents.toLower, inputFile);
+      code = expandMacros(inputContents.toLower, inputFile);
    catch (Exception e) {
       writeln("Error: " ~ e.message);
       return 1;
@@ -160,6 +191,33 @@ int main(string[] args) {
 
 	if (showNonary)
 		displayFile(code, showNumbers, fromZero, inputFile);
+
+   /////////////////////
+   // WRITE KAREL MAP //
+   /////////////////////
+
+   if (!kpuFile.exists) {
+      writeln("File " ~ kpuFile ~ " does not exist");
+      return 1;
+   }
+
+   // try read kpu file
+   string kpuContents;
+   try {
+      kpuContents = kpuFile.readText.strip;
+   } catch (FileException) {
+      writeln("File " ~ kpuFile ~ " could not be read");
+      return 1;
+   } catch (UTFException) {
+      writeln("Problems while decoding file " ~ kpuFile);
+      return 1;
+   }
+
+   if (kpuContents == "") {
+      writeln("KPU file is empty");
+      return 1;
+   }
+
 
    return 0;
 }

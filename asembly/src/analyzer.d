@@ -9,8 +9,6 @@ import config;
 auto newLine = regex("[\\r\\n]");
 auto whiteSpace = regex("\\s+");
 
-auto nonary = regex("^[0-8]{3}$");
-
 /////////////////
 // ACTUAL CODE //
 /////////////////
@@ -55,7 +53,8 @@ string[] convertToKytes (string[] code) {
             case ".data":
                if (tokens[1][0] == 'd') {
                   string s = to!string(to!int(tokens[1][1..$]), 9);
-                  for (int j = 0; j < 2 - s.length; j++)
+                  ulong left = 3 - s.length;
+                  for (int j = 0; j < left; j++)
                      s = "0" ~ s;
                   output ~= s;
                } else
@@ -84,9 +83,9 @@ string[] convertToKytes (string[] code) {
 //////////////////
 
 // test //
-string[] registers = ["r0", "r1", "r2", "r3", "r4"];
+immutable string[] registers = ["r0", "r1", "r2", "r3", "r4"];
 
-void syntaxCheck(string[] tokens, int line, string fileName) {
+void syntaxCheck(string[] tokens, int line, string fileName) pure {
    switch (tokens[0]) {
       case ".padding":
          if (tokens.length != 2)
@@ -107,8 +106,12 @@ void syntaxCheck(string[] tokens, int line, string fileName) {
                if (i >= 0 && i <= 728)
                   return;
             }
-            else if (tokens[1][0] == 'n' && tokens[1][1..$].match(nonary))
-               return;
+            else if (tokens[1][0] == 'n' && tokens[1][1..$].isNumeric
+            && !tokens[1][1..$].canFind("9")) {
+               int i = to!int(tokens[1][1..$], 9);
+               if (i >= 0 && i <= 728)
+                  return;
+            }
          }
 
          wrongArgs(".DATA", line, fileName);
@@ -150,7 +153,7 @@ void syntaxCheck(string[] tokens, int line, string fileName) {
 }
 
 // do //
-string instructionsDo(string[] tokens) {
+string instructionsDo(string[] tokens) pure {
    switch (tokens[0]) {
 // #BEGIN
 
@@ -549,12 +552,12 @@ string instructionsDo(string[] tokens) {
 ////////////
 // ERRORS //
 ////////////
-string wrongArgNum(string name, int line, string fileName) {
+string wrongArgNum(string name, int line, string fileName) pure {
    throw new Exception("Wrong number of arguments for " ~ name ~ " in file: "
          ~ fileName ~ " at line: " ~ to!string(line));
 }
 
-string wrongArgs(string name, int line, string fileName) {
+string wrongArgs(string name, int line, string fileName) pure {
    throw new Exception("Wrong argument given to " ~ name ~ " in file: "
          ~ fileName ~ " at line: " ~ to!string(line));
 }

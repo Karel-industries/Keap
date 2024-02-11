@@ -41,7 +41,7 @@ class Params:
     # list of register lines (combinaion of registers)
     lines = {"swp": gen_reg_unique(5), "wll": gen_reg_not_same(5), "wlr": gen_reg_not_same(5), "wrl": gen_reg_not_same(5), "drl": gen_reg_range(5), "drr": gen_reg_range(
         5), "uadd": gen_reg_same(4), "usub": gen_reg_not_same(4), "umul": gen_reg_not_same(4), "udiv": gen_reg_not_same(4), "uinc": gen_reg_range(4), "udec": gen_reg_range(4),
-        "ce": gen_cond_bits_range(4), "ice": gen_cond_bits_range(4), "re": gen_bits_range(4)}
+        "ce": gen_cond_bits_range(4), "ice": gen_cond_bits_range(4), "re": gen_bits_range(4), "halt":[0, "halt"]}
 
 
 class Keap:
@@ -51,7 +51,7 @@ class Keap:
     instructions = [[],
                     ["swp", "wll", "wlr", "wrl", "drl", "drr",],
                     ["uadd", "usub", "umul", "udiv", "uinc", "udec",],
-                    ["ce", "ice", "re"],
+                    ["ce", "ice", "re", "halt"],
                     [],
                     []]
 
@@ -85,14 +85,17 @@ class Keap:
                         Keap.data.append(
                             [str(gid), str(iid), str(ins), "", "", "", str(bit)])
                         iid += 1
+                elif ins_line[1] == "halt":
+                    Keap.data.append(
+                            [str(gid), str(iid), str(ins)])
+                    iid += 1
 
     def write_file():
         with open(Keap.file, "w") as f:
             for line in Keap.data:
-                if len(line)==5:
-                    f.write(f"{','.join(line)}\n")
-                else:
-                    f.write(f"{','.join(line)}, \n")
+                padding = len(Keap.data[0]) - len(line)
+                f.write(f"{','.join(line)}{','*padding}\n")
+
 
 
 Keap.gen_Keap()

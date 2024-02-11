@@ -1,6 +1,8 @@
-uinc r0
-uinc r0
-uadd r0 r0
-uadd r0 r0
-uadd r0 r0
-uadd r0 r0
+
+; set ALU flags
+
+ce iz 0
+
+; conditionally executed
+
+re 0

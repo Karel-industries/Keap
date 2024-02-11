@@ -39,8 +39,8 @@ This `keap-v1` supports the following instruction groups:
 | `0` | extended | A gid reserved for extended instruction sets |
 | `1` | memory | Instructions for managing and moving `Kytes` of data |
 | `2` | arithmetic | Instructions for processing data stored in registers |
-| `4` | control | Instructions for controlling conditional execution and branching  |
-| `5` | control-2 | Instructions for controlling conditional execution and branching (part 2) |
+| `3` | control | Instructions for controlling conditional execution and branching  |
+| `4` | control-2 | Instructions for controlling conditional execution and branching (part 2) |
 
 Specific instructions are described in their group segments bellow.
 
@@ -66,9 +66,9 @@ Register arguments are packed as *permutations*. Addresses can be read only from
 | `0-15` | `uadd` | Adds unsigned value in reg2 to reg. Saves result to reg. |
 | `16-27` | `usub` | Subtracts unsigned value in reg2 from reg. Saves result to reg |
 | `28-39` | `umul` | Multiplies unsigned reg and reg2 and saves result to reg. |
-|  | `udiv` | Long Divides unsigned reg by reg2 and saves result to reg. |
-| `40-43` | `uinc` | Increments unsigned reg by 1 |
-| `44-47` | `udec` | Decrements unsigned reg by 1 |
+| `40-51` | `udiv` | Long Divides unsigned reg by reg2 and saves result to reg. |
+| `52-55` | `uinc` | Increments unsigned reg by 1 |
+| `56-59` | `udec` | Decrements unsigned reg by 1 |
 |  | `sadd` | Adds signed value in reg2 to reg. Saves result to reg. |
 |  | `ssub` | Subtracts signed value in reg2 from reg. Saves result to reg |
 |  | `smul` | Multiplies signed reg and reg2 and saves result to reg. |
@@ -122,10 +122,10 @@ This instruction group implements *Conditional Bits* together with some Karel Co
 
 | iid | name | description |
 | ---- | ---- | ---- |
-|  | `ce` | Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is not** met. |
-|  | `ice` | Inverse Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is** met. |
-|  | `re` | Resume Execution. Resumes *Execute* stage if it is currently Conditionally disabled, otherwise no-op. |
-|  | `halt` | Halt Execution. Stops Karel's Execution loop and exists the `==BOOT==` function |
+| `0-35` | `ce` | Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is not** met. |
+| `36-71` | `ice` | Inverse Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is** met. |
+| `72-75` | `re` | Resume Execution. Resumes *Execute* stage if it is currently Conditionally disabled, otherwise no-op. |
+| `76` | `halt` | Halt Execution. Stops Karel's Execution loop and exists the `==BOOT==` function |
 |  | `fault` |  |
 
 ---

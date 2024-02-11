@@ -3,10 +3,14 @@ import std.string;
 import std.uni;
 import std.file;
 import std.utf;
+import std.regex;
+import std.algorithm;
+import std.conv;
 
 import expansion;
 import output;
 import analyzer;
+import config;
 
 bool showNumbers = false;
 bool fromZero = false;
@@ -144,7 +148,7 @@ int main(string[] args) {
    /////////////////////
    // File Extraction //
    /////////////////////
-   // try read input file
+   // try read input file //
    string inputContents;
    try {
       inputContents = inputFile.readText.strip;
@@ -201,7 +205,7 @@ int main(string[] args) {
       return 1;
    }
 
-   // try read kpu file
+   // try read kpu file //
    string kpuContents;
    try {
       kpuContents = kpuFile.readText.strip;
@@ -218,6 +222,46 @@ int main(string[] args) {
       return 1;
    }
 
+   // map definition //
+   if (kpuContents.canFind("Velikost města:")) {
+      kpuContents = replaceFirst!(cap => "Velikost města: " ~
+            to!string(mapWidth) ~ ", " ~ to!string(mapHeight) ~ "\n")
+            (kpuContents, regex("Velikost města:.*\n"));
+   } else if (kpuContents.canFind("Map size:")) {
+      kpuContents = replaceFirst!(cap => "Map size: " ~ to!string(mapWidth) ~
+            ", " ~ to!string(mapHeight) ~ "\n")
+            (kpuContents, regex("Map size:.*\n"));
+   }
+   else {
+      writeln(kpuFile ~ " does not have Map size / Velikost města");
+      return 1;
+   }
+
+   // map itself //
+   if (kpuContents.canFind("Definice města:")) {
+      kpuContents = kpuContents.split("Definice města:")[0] ~ "Definice města:\n";
+   } else if (kpuContents.canFind("Map definition:")) {
+      kpuContents = kpuContents.split("Map definition:")[0] ~ "Map definition:\n";
+   } else {
+      writeln(kpuFile ~ " does not have Map definition / Definice města");
+      return 1;
+   }
+
+   string map = getMap(code);
+   kpuContents ~= map;
+
+   if (showMap)
+      displayMap(map, showNumbers, fromZero);
+
+   if (outputFile == "") {
+      string[] tmp = inputFile.split(".");
+      if (tmp.length > 2)
+         outputFile = join(tmp[0..$-1], ".") ~ ".K99";
+      else
+         outputFile = tmp[0] ~ ".K99";
+   }
+
+   std.file.write(outputFile, kpuContents);
 
    return 0;
 }

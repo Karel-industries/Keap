@@ -22,6 +22,53 @@ for line in keap:
         "r2": tmp[4],
         })
 
+######################
+# GET SYNTAX CHECKER #
+######################
+
+prev_name = data[0]["name"]
+mode = "different"
+
+instrs = {
+        "one": [],
+        "different": [],
+        "non_different": [],
+        }
+
+# also chesk for this
+# will use later
+firstRegs = []
+positional = False
+positionals = []
+
+# sort based on arguments
+for i, dat in enumerate(data):
+    if prev_name != dat["name"]:
+        instrs[mode].append(f"\"{data[i-1]['name']}\"")
+        prev_name = dat["name"]
+        mode = "different"
+
+        if positional:
+            positionals.append(data[i-1]["name"])
+        firstRegs = []
+        positional = False
+
+    if dat["r2"] == "":
+        mode = "one"
+
+    else:
+        if dat["r1"] == dat["r2"]:
+            mode = "non_different"
+
+        if not dat["r1"] in firstRegs:
+            firstRegs.append(dat["r1"])
+        if dat["r2"] in firstRegs:
+            positional = True
+
+instrs[mode].append(f"\"{data[-1]['name']}\"")
+if positional:
+    positionals.append(data[-1]["name"])
+
 ###########################
 # GET THE EVALUATION CODE #
 ###########################
@@ -48,55 +95,46 @@ for dat in data:
     if dat["r2"] == "":
         eval_code += f"         if (tokens[1] == \"r{dat['r1']}\")\n" + \
                      f"            return \"{dat['kyte']}\";\n"
-    # first
     else:
-        if dat["r1"] != prev_reg:
-            if prev_reg != "":
-                eval_code += "         }\n"
-            eval_code     += f"         if (tokens.canFind(\"r{dat['r1']}\")) {{\n" #}} for editor ourpses
-            prev_reg = dat["r1"]                                                    # also WTF it that escape
+        # positonal
+        if dat["name"] in positionals:
+
+            if dat["r1"] != prev_reg:
+                if prev_reg != "":
+                    eval_code +=  "         }\n"
+                eval_code     += f"         if (tokens[1] == \"r{dat['r1']}\") {{\n" #}} for editor ourpses
+                prev_reg = dat["r1"]                                                    # also WTF it that escape
 
 
-    # second
-        eval_code += f"            if (tokens.canFind(\"r{dat['r2']}\"))\n" + \
-                     f"               return \"{dat['kyte']}\";\n"
+            # second
+            eval_code += f"            if (tokens[2] == \"r{dat['r2']}\")\n" + \
+                         f"               return \"{dat['kyte']}\";\n"
+        # non-positional
+        else:
+            # first
+            if dat["r1"] != prev_reg:
+                if prev_reg != "":
+                    eval_code +=  "         }\n"
+                eval_code     += f"         if (tokens.canFind(\"r{dat['r1']}\")) {{\n" #}}
+                prev_reg = dat["r1"]
+
+
+            # second
+            eval_code += f"            if (tokens.canFind(\"r{dat['r2']}\"))\n" + \
+                         f"               return \"{dat['kyte']}\";\n"
 
 # move first 'break;' to the end
 eval_code = eval_code[13:] + "      break;\n"
 
+
+################
+# GET NEW CODE #
+################
 # replace everything between '// #BEGIN' and '// #END'
 new_code = analyzer.split("// #BEGIN")[0] + "// #BEGIN\n" \
                     + eval_code + "// #END" + analyzer.split("// #END")[1]
 
-######################
-# GET SYNTAX CHECKER #
-######################
 
-prev_name = data[0]["name"]
-mode = "different"
-
-instrs = {
-        "one": [],
-        "different": [],
-        "non_different": [],
-        }
-
-# sort based on arguments
-for i, dat in enumerate(data):
-    if prev_name != dat["name"]:
-        instrs[mode].append(f"\"{data[i-1]['name']}\"")
-        prev_name = dat["name"]
-        mode = "different"
-
-    if dat["r2"] == "":
-        mode = "one"
-
-    elif dat["r1"] == dat["r2"]:
-        mode = "non_different"
-
-instrs[mode].append(f"\"{data[-1]['name']}\"")
-
-# insert
 new_code = re.sub("case .*?: // #ONE",
                   "case " + ", ".join(instrs["one"]) + ": // #ONE",
                   new_code)
@@ -108,6 +146,8 @@ new_code = re.sub("case .*?: // #DIFFERENT",
 new_code = re.sub("case .*?: // #NON_DIFFERENT",
                   "case " + ", ".join(instrs["non_different"]) + ": // #NON_DIFFERENT",
                   new_code)
-# write new code
+
+
+# write new code #
 with open("analyzer.d", "w") as f:
     f.write(new_code)

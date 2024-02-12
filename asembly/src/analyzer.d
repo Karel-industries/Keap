@@ -189,160 +189,160 @@ string instructionsDo(string[] tokens) pure {
       break;
 
       case "wll":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r1"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r1")
                return "111";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "112";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "113";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "114";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "115";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "116";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "117";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "118";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "120";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "121";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "122";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "123";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "124";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "125";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "126";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "127";
          }
-         if (tokens.canFind("r4")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r4") {
+            if (tokens[2] == "r0")
                return "128";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "130";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "131";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "132";
          }
       break;
 
       case "wlr":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r1"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r1")
                return "133";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "134";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "135";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "136";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "137";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "138";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "140";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "141";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "142";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "143";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "144";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "145";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "146";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "147";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "148";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "150";
          }
-         if (tokens.canFind("r4")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r4") {
+            if (tokens[2] == "r0")
                return "151";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "152";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "153";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "154";
          }
       break;
 
       case "wrl":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r1"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r1")
                return "155";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "156";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "157";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "158";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "160";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "161";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "162";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "163";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "164";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "165";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "166";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "167";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "168";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "170";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "171";
-            if (tokens.canFind("r4"))
+            if (tokens[2] == "r4")
                return "172";
          }
-         if (tokens.canFind("r4")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r4") {
+            if (tokens[2] == "r0")
                return "173";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "174";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "175";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "176";
          }
       break;
@@ -374,149 +374,149 @@ string instructionsDo(string[] tokens) pure {
       break;
 
       case "uadd":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r0")
                return "200";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "201";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "202";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "203";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "204";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "205";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "206";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "207";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "208";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "210";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "211";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "212";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "213";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "214";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "215";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "216";
          }
       break;
 
       case "usub":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r1"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r1")
                return "217";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "218";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "220";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "221";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "222";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "223";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "224";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "225";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "226";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "227";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "228";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "230";
          }
       break;
 
       case "umul":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r1"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r1")
                return "231";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "232";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "233";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "234";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "235";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "236";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "237";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "238";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "240";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "241";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "242";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "243";
          }
       break;
 
       case "udiv":
-         if (tokens.canFind("r0")) {
-            if (tokens.canFind("r1"))
+         if (tokens[1] == "r0") {
+            if (tokens[2] == "r1")
                return "244";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "245";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "246";
          }
-         if (tokens.canFind("r1")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r1") {
+            if (tokens[2] == "r0")
                return "247";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "248";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "250";
          }
-         if (tokens.canFind("r2")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r2") {
+            if (tokens[2] == "r0")
                return "251";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "252";
-            if (tokens.canFind("r3"))
+            if (tokens[2] == "r3")
                return "253";
          }
-         if (tokens.canFind("r3")) {
-            if (tokens.canFind("r0"))
+         if (tokens[1] == "r3") {
+            if (tokens[2] == "r0")
                return "254";
-            if (tokens.canFind("r1"))
+            if (tokens[2] == "r1")
                return "255";
-            if (tokens.canFind("r2"))
+            if (tokens[2] == "r2")
                return "256";
          }
       break;

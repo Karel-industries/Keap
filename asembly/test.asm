@@ -18,3 +18,11 @@ uadd r0 r0
 uadd r0 r0
 uadd r0 r0
 uadd r0 r0
+
+ice of 3
+
+re 0
+
+re 1
+
+halt

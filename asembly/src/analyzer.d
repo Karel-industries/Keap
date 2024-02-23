@@ -84,6 +84,8 @@ string[] convertToKytes (string[] code) {
 
 // test //
 immutable string[] registers = ["r0", "r1", "r2", "r3", "r4"];
+immutable string[] conditions = ["eq", "iz", "of", "uf", "nf",
+                                 "gt", "lt", "ge", "le"];
 
 void syntaxCheck(string[] tokens, int line, string fileName) pure {
    switch (tokens[0]) {
@@ -142,30 +144,28 @@ void syntaxCheck(string[] tokens, int line, string fileName) pure {
             wrongArgs(tokens[0], line, fileName);
          break;
 
-		case "?": // #NOTHING
-			if (tokens.length != 1)
-				wrongArgNum(tokens[0], line, fileName);
-			break;
+      case "halt": // #NOTHING
+         if (tokens.length != 1)
+            wrongArgNum(tokens[0], line, fileName);
+         break;
 
-		case "??": // #CONDITION
-			if (tokens.length != 3)
-				wrongArgNum(tokens[0], line, fileName);
+      case "ce", "ice": // #CONDITION
+         if (tokens.length != 3)
+            wrongArgNum(tokens[0], line, fileName);
 
-			int t1 = to!int(tokens[1]);
-			int t2 = to!int(tokens[2]);
-			if (t1 < 0 || t1 > 8 || t2 < 0 || t2 > 3)
-				wrongArgs(tokens[0], line, fileName);
-			break;
+         int t2 = to!int(tokens[2]);
+         if (!conditions.canFind(tokens[1]) || t2 < 0 || t2 > 3)
+            wrongArgs(tokens[0], line, fileName);
+         break;
 
-		case "???": // #CONDITION_END
-			if (tokens.length != 2)
-				wrongArgNum(tokens[0], line, fileName);
+      case "re": // #CONDITION_END
+         if (tokens.length != 2)
+            wrongArgNum(tokens[0], line, fileName);
 
-			int t1 = to!int(tokens[1]);
-			int t2 = to!int(tokens[2]);
-			if (t1 < 0 || t1 > 3)
-				wrongArgs(tokens[0], line, fileName);
-			break;
+         int t1 = to!int(tokens[1]);
+         if (t1 < 0 || t1 > 3)
+            wrongArgs(tokens[0], line, fileName);
+         break;
 
       default:
          if (tokens[0].length == 0 || tokens[0][0] == '.'
@@ -181,7 +181,6 @@ void syntaxCheck(string[] tokens, int line, string fileName) pure {
 string instructionsDo(string[] tokens) pure {
    switch (tokens[0]) {
 // #BEGIN
-
       case "swp":
          if (tokens.canFind("r0")) {
             if (tokens.canFind("r1"))
@@ -211,7 +210,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens.canFind("r4"))
                return "110";
          }
-      break;
+         break;
 
       case "wll":
          if (tokens[1] == "r0") {
@@ -264,7 +263,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r3")
                return "132";
          }
-      break;
+         break;
 
       case "wlr":
          if (tokens[1] == "r0") {
@@ -317,7 +316,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r3")
                return "154";
          }
-      break;
+         break;
 
       case "wrl":
          if (tokens[1] == "r0") {
@@ -370,7 +369,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r3")
                return "176";
          }
-      break;
+         break;
 
       case "drl":
          if (tokens[1] == "r0")
@@ -383,7 +382,7 @@ string instructionsDo(string[] tokens) pure {
             return "181";
          if (tokens[1] == "r4")
             return "182";
-      break;
+         break;
 
       case "drr":
          if (tokens[1] == "r0")
@@ -396,7 +395,7 @@ string instructionsDo(string[] tokens) pure {
             return "186";
          if (tokens[1] == "r4")
             return "187";
-      break;
+         break;
 
       case "uadd":
          if (tokens[1] == "r0") {
@@ -439,7 +438,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r3")
                return "216";
          }
-      break;
+         break;
 
       case "usub":
          if (tokens[1] == "r0") {
@@ -474,7 +473,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r2")
                return "230";
          }
-      break;
+         break;
 
       case "umul":
          if (tokens[1] == "r0") {
@@ -509,7 +508,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r2")
                return "243";
          }
-      break;
+         break;
 
       case "udiv":
          if (tokens[1] == "r0") {
@@ -544,7 +543,7 @@ string instructionsDo(string[] tokens) pure {
             if (tokens[2] == "r2")
                return "256";
          }
-      break;
+         break;
 
       case "uinc":
          if (tokens[1] == "r0")
@@ -555,7 +554,7 @@ string instructionsDo(string[] tokens) pure {
             return "260";
          if (tokens[1] == "r3")
             return "261";
-      break;
+         break;
 
       case "udec":
          if (tokens[1] == "r0")
@@ -566,6 +565,188 @@ string instructionsDo(string[] tokens) pure {
             return "264";
          if (tokens[1] == "r3")
             return "265";
+         break;
+
+      case "ce":
+         if (tokens[2] == "0") {
+            if (tokens[1] == "eq")
+               return "300";
+            if (tokens[1] == "iz")
+               return "301";
+            if (tokens[1] == "of")
+               return "302";
+            if (tokens[1] == "uf")
+               return "303";
+            if (tokens[1] == "nf")
+               return "304";
+            if (tokens[1] == "gt")
+               return "305";
+            if (tokens[1] == "lt")
+               return "306";
+            if (tokens[1] == "ge")
+               return "307";
+            if (tokens[1] == "le")
+               return "308";
+         }
+         if (tokens[2] == "1") {
+            if (tokens[1] == "eq")
+               return "310";
+            if (tokens[1] == "iz")
+               return "311";
+            if (tokens[1] == "of")
+               return "312";
+            if (tokens[1] == "uf")
+               return "313";
+            if (tokens[1] == "nf")
+               return "314";
+            if (tokens[1] == "gt")
+               return "315";
+            if (tokens[1] == "lt")
+               return "316";
+            if (tokens[1] == "ge")
+               return "317";
+            if (tokens[1] == "le")
+               return "318";
+         }
+         if (tokens[2] == "2") {
+            if (tokens[1] == "eq")
+               return "320";
+            if (tokens[1] == "iz")
+               return "321";
+            if (tokens[1] == "of")
+               return "322";
+            if (tokens[1] == "uf")
+               return "323";
+            if (tokens[1] == "nf")
+               return "324";
+            if (tokens[1] == "gt")
+               return "325";
+            if (tokens[1] == "lt")
+               return "326";
+            if (tokens[1] == "ge")
+               return "327";
+            if (tokens[1] == "le")
+               return "328";
+         }
+         if (tokens[2] == "3") {
+            if (tokens[1] == "eq")
+               return "330";
+            if (tokens[1] == "iz")
+               return "331";
+            if (tokens[1] == "of")
+               return "332";
+            if (tokens[1] == "uf")
+               return "333";
+            if (tokens[1] == "nf")
+               return "334";
+            if (tokens[1] == "gt")
+               return "335";
+            if (tokens[1] == "lt")
+               return "336";
+            if (tokens[1] == "ge")
+               return "337";
+            if (tokens[1] == "le")
+               return "338";
+         }
+         break;
+
+      case "ice":
+         if (tokens[2] == "0") {
+            if (tokens[1] == "eq")
+               return "340";
+            if (tokens[1] == "iz")
+               return "341";
+            if (tokens[1] == "of")
+               return "342";
+            if (tokens[1] == "uf")
+               return "343";
+            if (tokens[1] == "nf")
+               return "344";
+            if (tokens[1] == "gt")
+               return "345";
+            if (tokens[1] == "lt")
+               return "346";
+            if (tokens[1] == "ge")
+               return "347";
+            if (tokens[1] == "le")
+               return "348";
+         }
+         if (tokens[2] == "1") {
+            if (tokens[1] == "eq")
+               return "350";
+            if (tokens[1] == "iz")
+               return "351";
+            if (tokens[1] == "of")
+               return "352";
+            if (tokens[1] == "uf")
+               return "353";
+            if (tokens[1] == "nf")
+               return "354";
+            if (tokens[1] == "gt")
+               return "355";
+            if (tokens[1] == "lt")
+               return "356";
+            if (tokens[1] == "ge")
+               return "357";
+            if (tokens[1] == "le")
+               return "358";
+         }
+         if (tokens[2] == "2") {
+            if (tokens[1] == "eq")
+               return "360";
+            if (tokens[1] == "iz")
+               return "361";
+            if (tokens[1] == "of")
+               return "362";
+            if (tokens[1] == "uf")
+               return "363";
+            if (tokens[1] == "nf")
+               return "364";
+            if (tokens[1] == "gt")
+               return "365";
+            if (tokens[1] == "lt")
+               return "366";
+            if (tokens[1] == "ge")
+               return "367";
+            if (tokens[1] == "le")
+               return "368";
+         }
+         if (tokens[2] == "3") {
+            if (tokens[1] == "eq")
+               return "370";
+            if (tokens[1] == "iz")
+               return "371";
+            if (tokens[1] == "of")
+               return "372";
+            if (tokens[1] == "uf")
+               return "373";
+            if (tokens[1] == "nf")
+               return "374";
+            if (tokens[1] == "gt")
+               return "375";
+            if (tokens[1] == "lt")
+               return "376";
+            if (tokens[1] == "ge")
+               return "377";
+            if (tokens[1] == "le")
+               return "378";
+         }
+         break;
+
+      case "re":
+         if (tokens[1] == "0")
+            return "380";
+         if (tokens[1] == "1")
+            return "381";
+         if (tokens[1] == "2")
+            return "382";
+         if (tokens[1] == "3")
+            return "383";
+         break;
+
+      case "halt":
+         return "384";
+
       break;
 // #END
 

@@ -107,7 +107,7 @@ halt
 The suffix syntax is modelled after the `arm` arch. add these behind a conditional instruction to specify the condition
 
 | Condition code | Condition id | Meaning |
-| ---- | ---- |
+| ---- | ---- | ---- |
 | `eq` | `0` | Equal |
 | `iz` | `1` | Zero |
 | `of` | `2` | Overflow |

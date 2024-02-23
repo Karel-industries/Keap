@@ -40,7 +40,7 @@ class Params:
 
     # list of register lines (combinaion of registers)
     lines = {"swp": gen_reg_unique(5), "wll": gen_reg_not_same(5), "wlr": gen_reg_not_same(5), "wrl": gen_reg_not_same(5), "drl": gen_reg_range(5), "drr": gen_reg_range(
-        5), "uadd": gen_reg_same(4), "usub": gen_reg_not_same(4), "umul": gen_reg_not_same(4), "udiv": gen_reg_not_same(4), "uinc": gen_reg_range(4), "udec": gen_reg_range(4),
+        5), "uadd": gen_reg_same(4), "usub": gen_reg_not_same(4), "umul": gen_reg_not_same(4), "udiv": gen_reg_not_same(4), "uinc": gen_reg_range(4), "udec": gen_reg_range(4), "ueval": gen_reg_range(4),
         "ce": gen_cond_bits_range(4), "ice": gen_cond_bits_range(4), "re": gen_bits_range(4), "halt":[0, "halt"]}
 
 
@@ -50,7 +50,7 @@ class Keap:
 
     instructions = [[],
                     ["swp", "wll", "wlr", "wrl", "drl", "drr",],
-                    ["uadd", "usub", "umul", "udiv", "uinc", "udec",],
+                    ["uadd", "usub", "umul", "udiv", "uinc", "udec", "ueval",],
                     ["ce", "ice", "re", "halt"],
                     [],
                     []]

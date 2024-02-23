@@ -142,6 +142,31 @@ void syntaxCheck(string[] tokens, int line, string fileName) pure {
             wrongArgs(tokens[0], line, fileName);
          break;
 
+		case "?": // #NOTHING
+			if (tokens.length != 1)
+				wrongArgNum(tokens[0], line, fileName);
+			break;
+
+		case "??": // #CONDITION
+			if (tokens.length != 3)
+				wrongArgNum(tokens[0], line, fileName);
+
+			int t1 = to!int(tokens[1]);
+			int t2 = to!int(tokens[2]);
+			if (t1 < 0 || t1 > 8 || t2 < 0 || t2 > 3)
+				wrongArgs(tokens[0], line, fileName);
+			break;
+
+		case "???": // #CONDITION_END
+			if (tokens.length != 2)
+				wrongArgNum(tokens[0], line, fileName);
+
+			int t1 = to!int(tokens[1]);
+			int t2 = to!int(tokens[2]);
+			if (t1 < 0 || t1 > 3)
+				wrongArgs(tokens[0], line, fileName);
+			break;
+
       default:
          if (tokens[0].length == 0 || tokens[0][0] == '.'
                || tokens[0][0] == '!' || tokens[0] == " ")

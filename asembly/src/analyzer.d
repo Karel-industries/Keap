@@ -87,7 +87,9 @@ immutable string[] registers = ["r0", "r1", "r2", "r3", "r4"];
 immutable string[] conditions = ["eq", "iz", "of", "uf", "nf",
                                  "gt", "lt", "ge", "le"];
 
-void syntaxCheck(string[] tokens, int line, string fileName) pure {
+int[] openedConditions = [false, false, false, false];
+
+void syntaxCheck(string[] tokens, int line, string fileName) {
    switch (tokens[0]) {
       case ".padding":
          if (tokens.length != 2)
@@ -153,18 +155,38 @@ void syntaxCheck(string[] tokens, int line, string fileName) pure {
          if (tokens.length != 3)
             wrongArgNum(tokens[0], line, fileName);
 
+         if (!tokens[2].isNumeric) {
+            if (tokens[2][0] == '$')
+               noHERElables(tokens[0], line, fileName);
+            wrongArgs(tokens[0], line, fileName);
+         }
+
          int t2 = to!int(tokens[2]);
          if (!conditions.canFind(tokens[1]) || t2 < 0 || t2 > 3)
             wrongArgs(tokens[0], line, fileName);
+
+         if (openedConditions[t2])
+            alreadyOpened(t2, line, fileName);
+         openedConditions[t2] = true;
          break;
 
       case "re": // #CONDITION_END
          if (tokens.length != 2)
             wrongArgNum(tokens[0], line, fileName);
 
+         if (!tokens[1].isNumeric) {
+            if (tokens[1][0] == '$')
+               noHERElables(tokens[0], line, fileName);
+            wrongArgs(tokens[0], line, fileName);
+         }
+
          int t1 = to!int(tokens[1]);
          if (t1 < 0 || t1 > 3)
             wrongArgs(tokens[0], line, fileName);
+
+         if (!openedConditions[t1])
+            notOpened(t1, line, fileName);
+         openedConditions[t1] = false;
          break;
 
       default:
@@ -758,12 +780,27 @@ string instructionsDo(string[] tokens) pure {
 ////////////
 // ERRORS //
 ////////////
-string wrongArgNum(string name, int line, string fileName) pure {
+void wrongArgNum(string name, int line, string fileName) {
    throw new Exception("Wrong number of arguments for " ~ name ~ " in file: "
          ~ fileName ~ " at line: " ~ to!string(line));
 }
 
-string wrongArgs(string name, int line, string fileName) pure {
+void wrongArgs(string name, int line, string fileName) {
    throw new Exception("Wrong argument given to " ~ name ~ " in file: "
+         ~ fileName ~ " at line: " ~ to!string(line));
+}
+
+void alreadyOpened(int bit, int line, string fileName) {
+   throw new Exception("Condition bit " ~ to!string(bit) ~
+         " already opened in file: " ~ fileName ~ " at line: " ~ to!string(line));
+}
+
+void notOpened(int bit, int line, string fileName) {
+   throw new Exception("Condition bit " ~ to!string(bit)
+         ~ " not opened in file: " ~ fileName ~ " at line: " ~ to!string(line));
+}
+
+void noHERElables(string name, int line, string fileName) {
+   throw new Exception("Cannot use .HERE lables in " ~ name ~ " in file: "
          ~ fileName ~ " at line: " ~ to!string(line));
 }

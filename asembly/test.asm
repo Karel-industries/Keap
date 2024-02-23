@@ -1,5 +1,6 @@
 uinc r0
 uinc r0
+.HERE k
 .DATA n033
 .DATA n155
 
@@ -13,6 +14,11 @@ uinc r0
 ; .DATA d-66
 .DATA d37
 .DATA d728
+
+.MACRO G f
+ce iz f
+.ENDMACRO
+
 ; .DATA d800
 uadd r0 r0
 uadd r0 r0
@@ -21,8 +27,14 @@ uadd r0 r0
 
 ice of 3
 
+; !G $k
+
+ce iz 1
+
+ce iz 0
+re 1
 re 0
 
-re 1
+re 3
 
 halt

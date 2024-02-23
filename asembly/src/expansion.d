@@ -88,7 +88,12 @@ string[] expandMacros(string code, string fileName) {
             ~ " at line " ~ to!string(macroStartLine));
 
    // apply macros //
-   return applyMacros(lines, 1, fileName);
+   string[] outcome = applyMacros(lines, 1, fileName);
+   for (int i = 0; i < openedConditions.length; i++)
+       if (openedConditions[i])
+           throw new Exception("Condition bit " ~ to!string(i) ~
+                   " not closed in file: " ~ fileName);
+   return outcome;
 }
 
 // this will currently evaluate macros even in macro definitions

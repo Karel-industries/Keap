@@ -39,8 +39,8 @@ This `keap-v1` supports the following instruction groups:
 | `0` | extended | A gid reserved for extended instruction sets |
 | `1` | memory | Instructions for managing and moving `Kytes` of data |
 | `2` | arithmetic | Instructions for processing data stored in registers |
-| `4` | control | Instructions for controlling conditional execution and branching  |
-| `5` | control-2 | Instructions for controlling conditional execution and branching (part 2) |
+| `3` | control | Instructions for controlling conditional execution and branching  |
+| `4` | control-2 | Instructions for controlling conditional execution and branching (part 2) |
 
 Specific instructions are described in their group segments bellow.
 
@@ -66,9 +66,9 @@ Register arguments are packed as *permutations*. Addresses can be read only from
 | `0-15` | `uadd` | Adds unsigned value in reg2 to reg. Saves result to reg. |
 | `16-27` | `usub` | Subtracts unsigned value in reg2 from reg. Saves result to reg |
 | `28-39` | `umul` | Multiplies unsigned reg and reg2 and saves result to reg. |
-|  | `udiv` | Long Divides unsigned reg by reg2 and saves result to reg. |
-| `40-43` | `uinc` | Increments unsigned reg by 1 |
-| `44-47` | `udec` | Decrements unsigned reg by 1 |
+| `40-51` | `udiv` | Long Divides unsigned reg by reg2 and saves result to reg. |
+| `52-55` | `uinc` | Increments unsigned reg by 1 |
+| `56-59` | `udec` | Decrements unsigned reg by 1 |
 |  | `sadd` | Adds signed value in reg2 to reg. Saves result to reg. |
 |  | `ssub` | Subtracts signed value in reg2 from reg. Saves result to reg |
 |  | `smul` | Multiplies signed reg and reg2 and saves result to reg. |
@@ -106,41 +106,27 @@ halt
 
 The suffix syntax is modelled after the `arm` arch. add these behind a conditional instruction to specify the condition
 
-| Condition code | Meaning |
+| Condition code | Condition id | Meaning |
 | ---- | ---- |
-| `eq` | Equal |
-| `ne` | Not Equal |
-| `nz` | Not Zero |
-| `iz` | Zero |
-| `of` | Overflow |
-| `uf` | Underflow |
-| `nf` | Normalflow |
-| `gt` | Greter than |
-| `lt` | Lesser than |
-| `ge` | Greter or equal |
-| `le` | Lesser or equal |
+| `eq` | `0` | Equal |
+| `iz` | `1` | Zero |
+| `of` | `2` | Overflow |
+| `uf` | `3` | Underflow |
+| `nf` | `4` | Normalflow |
+| `gt` | `5` | Greter than |
+| `lt` | `6` | Lesser than |
+| `ge` | `7` | Greter or equal |
+| `le` | `8` | Lesser or equal |
 
-This instruction group implements *Conditional Bits* together with conventional *unconditional* branching/jumping instructions.
-
-> [!note]
-> if you need non-linking branching use a `wll` or any of the other write operations to register `r4`/`pc` 
+This instruction group implements *Conditional Bits* together with some Karel Control instructions.
 
 | iid | name | description |
 | ---- | ---- | ---- |
-| `0` | `bl` | Linked Branch to routine in reg. Saves origin routine address + 1 to `r3` |
-|  | `sbl` | Swapping Linked Branch. Branches to routine in `r3` while saving the origin routine address + 1 to `r3`. |
-|  | `ce` | Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is not** met. |
-|  | `de` | Conditional Disable. Disables *Execute* stage of the CPU Pipeline if the condition **is** met. |
-|  | `re` | Resume Execution. Resumes *Execute* stage if it is currently Conditionally disabled, otherwise no-op. |
-|  | `halt` |  |
+| `0-35` | `ce` | Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is not** met. |
+| `36-71` | `ice` | Inverse Conditional Execution. Disables *Execute* stage of the CPU Pipeline if the condition **is** met. |
+| `72-75` | `re` | Resume Execution. Resumes *Execute* stage if it is currently Conditionally disabled, otherwise no-op. |
+| `76` | `halt` | Halt Execution. Stops Karel's Execution loop and exists the `==BOOT==` function |
 |  | `fault` |  |
-
-#### Control Instructions
-
-Instructions for controlling code flow and the CPU.
-
-- `halt`
-- `fault`
 
 ---
 ### Faults (`STOPs`)

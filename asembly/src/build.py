@@ -25,7 +25,7 @@ if platform.system() == "Linux":
         print("no compiler found")
         exit(1)
 
-    print(f"usind {use}")
+    print(f"using {use}")
     out = subprocess.run([use, "-of=keap"] + files)
     if out.returncode == 0:
         subprocess.run(["rm", "keap.o"])

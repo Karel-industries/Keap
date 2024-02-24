@@ -9,6 +9,15 @@ import config;
 auto newLine = regex("[\\r\\n]");
 auto whiteSpace = regex("\\s+");
 
+struct Label {
+   string definedIn;
+   int definedAt;
+   string value;
+   bool isHere = false;
+}
+
+Label[string] labels;
+
 /////////////////
 // ACTUAL CODE //
 /////////////////
@@ -17,8 +26,8 @@ string[] convertToKytes (string[] code) {
    string[] output = [];
 
    // go through code //
-   for (int i = 1; i <= code.length; i++) {
-      string line = code[i-1].strip;
+   for (int i = 0; i < code.length; i++) {
+      string line = code[i].strip;
       if (line == "" || line[0] == ';')
          continue;
 
@@ -43,8 +52,12 @@ string[] convertToKytes (string[] code) {
          switch (tokens[0]) {
             /*
                NOT NEEDED:
-               .HERE
+               .LABEL
              */
+            case ".here":
+               labels[tokens[1]] = Label("", 0, to!string(output.length));
+               break;
+
             case ".padding":
                for (int j = 0; j < to!int(tokens[1]); j++)
                   output ~= "000";
@@ -66,14 +79,18 @@ string[] convertToKytes (string[] code) {
       }
 
       // instructions //
-      else {
+      else if (!line.canFind('$')) {
          output ~= instructionsDo(tokens);
       }
-
-      if (output.length > maxInstructions)
-         throw new Exception("Code has more instructions than "
-               ~ to!string(maxInstructions));
+      // to be expanded //
+      else {
+         output ~= line;
+      }
    }
+
+   if (output.length > maxInstructions)
+      throw new Exception("Code has more instructions than "
+            ~ to!string(maxInstructions));
 
    return output;
 }
@@ -88,6 +105,8 @@ immutable string[] conditions = ["eq", "iz", "of", "uf", "nf",
                                  "gt", "lt", "ge", "le"];
 
 int[] openedConditions = [false, false, false, false];
+
+int[] inside = [];
 
 void syntaxCheck(string[] tokens, int line, string fileName) {
    switch (tokens[0]) {
@@ -165,8 +184,8 @@ void syntaxCheck(string[] tokens, int line, string fileName) {
          if (!conditions.canFind(tokens[1]) || t2 < 0 || t2 > 3)
             wrongArgs(tokens[0], line, fileName);
 
-         if (openedConditions[t2])
-            alreadyOpened(t2, line, fileName);
+         /* if (openedConditions[t2]) */
+         /*    alreadyOpened(t2, line, fileName); */
          openedConditions[t2] = true;
          break;
 
@@ -184,8 +203,8 @@ void syntaxCheck(string[] tokens, int line, string fileName) {
          if (t1 < 0 || t1 > 3)
             wrongArgs(tokens[0], line, fileName);
 
-         if (!openedConditions[t1])
-            notOpened(t1, line, fileName);
+         /* if (!openedConditions[t1]) */
+         /*    notOpened(t1, line, fileName); */
          openedConditions[t1] = false;
          break;
 

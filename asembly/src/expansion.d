@@ -1,6 +1,7 @@
 import std.stdio;
 import std.string;
 import std.regex;
+import std.algorithm;
 import std.conv;
 
 import analyzer;
@@ -33,15 +34,13 @@ struct Macro {
 
 Macro[string] macros;
 
-string[] expandMacros(string code, string fileName) {
+string[] expandMacros(string[] code, string fileName) {
 	int macroStartLine = 0;
 	string currentMacro = "";
 
-   string[] lines = code.split(newLine);
-
    // get macros //
-   for (int i = 1; i <= lines.length; i++) {
-      string line = lines[i-1].strip;
+   for (int i = 1; i <= code.length; i++) {
+      string line = code[i-1].strip;
       if (line == "")
          line = " ";
 
@@ -88,7 +87,7 @@ string[] expandMacros(string code, string fileName) {
             ~ " at line " ~ to!string(macroStartLine));
 
    // apply macros //
-   string[] outcome = applyMacros(lines, 1, fileName);
+   string[] outcome = applyMacros(code, 1, fileName);
    for (int i = 0; i < openedConditions.length; i++)
        if (openedConditions[i])
            throw new Exception("Condition bit " ~ to!string(i) ~
@@ -119,7 +118,11 @@ string[] applyMacros(string[] code, int startLine, string fileName) {
 		// check for correct syntax
 		// done here, becouse correct error messages while expandnig macros
 		if (!inMacro)
-			syntaxCheck(tokens, i+startLine, fileName);
+         if (code[i].canFind('$'))
+            if (tokens[0][0] != '!')
+               labellineMetadata ~= LabelMeta(i+startLine, fileName);
+         else
+            syntaxCheck(tokens, i+startLine, fileName);
 
       if (tokens[0][0] == '!') {
          if (!(tokens[0][1..$] in macros))
@@ -127,8 +130,8 @@ string[] applyMacros(string[] code, int startLine, string fileName) {
                   ~ " at line " ~ to!string(i+startLine));
 
          if (macros[tokens[0][1..$]].params.length != tokens[1..$].length)
-            throw new Exception("Wrong number of macro parameters in file "
-                  ~ fileName ~ " at line " ~ to!string(i+startLine));
+            throw new Exception("Wrong number of macro parameters in file: "
+                  ~ fileName ~ " at line: " ~ to!string(i+startLine));
 
          if (i+1 < code.length)
             code = code[0..i] ~ macros[tokens[0][1..$]].apply(tokens[1..$],
@@ -146,15 +149,13 @@ string[] applyMacros(string[] code, int startLine, string fileName) {
 // Labels //
 ////////////
 
-struct Label {
-   string definedIn;
-   int definedAt;
-   int value;
+struct LabelMeta {
+   int line;
+   string fileName;
 }
+LabelMeta[] labellineMetadata = [];
 
-Label[string] labels;
-
-string[] expandLables(string[] code, string fileName) {
+void harvestLabels(string[] code, string fileName) {
    // get labels //
    for (int i = 0; i < code.length; i++) {
       string line = code[i].strip;
@@ -163,10 +164,10 @@ string[] expandLables(string[] code, string fileName) {
 
       string[] tokens = line.split(whiteSpace);
 
-      // here
+      // .HERE //
       if (tokens[0] == ".here") {
          if (tokens.length < 2)
-            throw new Exception(".HERE without label in file " ~ fileName
+            throw new Exception(".HERE without name in file " ~ fileName
                   ~ " at line " ~ to!string(i+1));
          if (tokens[1] in labels)
             throw new Exception("Label " ~ tokens[1] ~ " in file " ~ fileName
@@ -174,12 +175,31 @@ string[] expandLables(string[] code, string fileName) {
                   ~ labels[tokens[1]].definedIn ~ " at line "
                   ~ to!string(labels[tokens[1]].definedAt));
 
-         labels[tokens[1]] = Label(fileName, i+1, i);
-         tokens[1] = to!string(i);
-         code[i] = tokens.join(" ");
-         
+         labels[tokens[1]] = Label(fileName, i+1, "", true);
+      }
+
+      // .LABEL //
+      else if (tokens[0] == ".label") {
+         if (tokens.length < 2)
+            throw new Exception(".LABEL without name in file " ~ fileName
+                  ~ " at line " ~ to!string(i+1));
+         if (tokens.length < 3)
+            throw new Exception(".LABEL without value in file " ~ fileName
+                  ~ " at line " ~ to!string(i+1));
+         if (tokens[1] in labels)
+            throw new Exception("Label " ~ tokens[1] ~ " in file " ~ fileName
+                  ~ " at line " ~ to!string(i+1) ~ " is already defined in file "
+                  ~ labels[tokens[1]].definedIn ~ " at line "
+                  ~ to!string(labels[tokens[1]].definedAt));
+
+         labels[tokens[1]] = Label(fileName, i+1, tokens[2]);
       }
    }
+}
+
+string[] expandLabels(string[] code, bool secondCall = false) {
+
+   int skipped = 0;
 
    // apply them //
    for (int i = 0; i < code.length; i++) {
@@ -191,11 +211,48 @@ string[] expandLables(string[] code, string fileName) {
          if (tokens[j][0] == '$') {
             if (!(tokens[j][1..$] in labels))
                throw new Exception("Undefined label " ~ tokens[j][1..$]
-                     ~ " in file " ~ fileName ~ "at line " ~ to!string(i+1));
+                     ~ " in file: " ~ to!string(labellineMetadata[skipped].line)
+                     ~ "at line: " ~ labellineMetadata[skipped].fileName);
 
-            tokens[j] = to!string(labels[tokens[j][1..$]].value);
-            code[i] = tokens.join(" ");
+            if (!labels[tokens[j][1..$]].isHere) {
+               tokens[j] = to!string(labels[tokens[j][1..$]].value);
+               code[i] = tokens.join(" ");
+
+               if (!secondCall) {
+                  writeln(labellineMetadata, skipped);
+                  syntaxCheck(tokens, labellineMetadata[skipped].line,
+                        labellineMetadata[skipped].fileName);
+
+                  labellineMetadata = labellineMetadata.remove(skipped);
+               }
+            }
+            // .HERE needs to be done later
+            else {
+               skipped++;
+            }
          }
+      }
+   }
+
+   return code;
+}
+
+// use after .HERE values gained //
+string[] reexpandLabels(string[] code) {
+   for (int i = 0; i < code.length; i++) {
+      if (code[i].canFind('$')){
+         string[] tokens = code[i].split(whiteSpace);
+
+         for (int j = 0; j < tokens.length; j++) {
+            if (tokens[j][0] == '$')
+               tokens[j] = to!string(labels[tokens[j][1..$]].value);
+         }
+         syntaxCheck(tokens, labellineMetadata[0].line,
+               labellineMetadata[0].fileName);
+         if (labellineMetadata.length != 1)
+            labellineMetadata = labellineMetadata[1..$];
+
+         code[i] = instructionsDo(tokens);
       }
    }
 

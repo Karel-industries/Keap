@@ -1,8 +1,12 @@
 uinc r0
 uinc r0
+.LABEL y 1
+
 .HERE k
 .DATA n033
 .DATA n155
+
+.LABEL p 3
 
 .PADDING 13
 ; .DATA n975
@@ -17,6 +21,7 @@ uinc r0
 
 .MACRO G f
 ce iz f
+re $y
 .ENDMACRO
 
 ; .DATA d800
@@ -25,15 +30,15 @@ uadd r0 r0
 uadd r0 r0
 uadd r0 r0
 
-ice of 3
 
-; !G $k
+!G $k
 
-ce iz 1
+ce iz $p
+!G $k
 
-ce iz 0
-re 1
-re 0
+ce iz $k
+re 2
+re $y
 
 re 3
 

@@ -165,9 +165,17 @@ int main(string[] args) {
       return 0;
    }
 
-   string[] code;
+   string[] code = inputContents.toLower.split(newLine);
+
    try 
-      code = expandMacros(inputContents.toLower, inputFile);
+      harvestLabels(code, inputFile);
+   catch (Exception e) {
+      writeln("Error: " ~ e.message);
+      return 1;
+   }
+
+   try 
+      code = expandMacros(code, inputFile);
    catch (Exception e) {
       writeln("Error: " ~ e.message);
       return 1;
@@ -177,14 +185,13 @@ int main(string[] args) {
       displayFile(code, showNumbers, fromZero, inputFile);
 
    try 
-      code = expandLables(code, inputFile);
+      code = expandLabels(code);
    catch (Exception e) {
       writeln("Error: " ~ e.message);
       return 1;
    }
 
-   if (showExpanded && !showLabels)
-      displayFile(code, showNumbers, fromZero, inputFile);
+   string[] expanded = code;
 
    try 
       code = convertToKytes(code);
@@ -192,6 +199,16 @@ int main(string[] args) {
       writeln("Error: " ~ e.message);
       return 1;
    }
+
+   try 
+      code = reexpandLabels(code);
+   catch (Exception e) {
+      writeln("Error: " ~ e.message);
+      return 1;
+   }
+
+   if (showExpanded && !showLabels)
+      displayFile(expandLabels(expanded, true), showNumbers, fromZero, inputFile);
 
 	if (showNonary)
 		displayFile(code, showNumbers, fromZero, inputFile);

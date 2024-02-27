@@ -4,12 +4,14 @@ import sys
 
 from pprint import pprint
 
-map_size = 20
+map_size = 49
+max_prog_len = 729
 
 
 class Utils:
     def gen_kyte(gid, iid):
-        return [int(gid), int(int(iid)/9), int(int(iid)%9)]
+        return [int(gid), int(int(iid) / 9), int(int(iid) % 9)]
+
 
 class Keap:
     csv_file = ""
@@ -22,37 +24,45 @@ class Keap:
     def read_file():
         with open(Keap.csv_file, "r") as f:
             for line in f.readlines():
-                Keap.csv_lines.append(line.lstrip().rstrip().replace("   ", "").replace("  ", ""))
+                Keap.csv_lines.append(
+                    line.lstrip().rstrip().replace("   ", "").replace("  ", "")
+                )
             Keap.csv_lines.pop(0)  # remove first line
 
         for line in Keap.csv_lines:
             tmp = line.split(",")
             Keap._csv_data.append(tmp)
-        
+
         for line in Keap._csv_data:
             # gid, iid, ins, reg, reg, cond_index, cond_bit
 
-            if line[3] == "" and line[4] == "": # no reg1 and no reg2 = conditional
+            if line[3] == "" and line[4] == "":  # no reg1 and no reg2 = conditional
 
                 if not line[2] in list(Keap.instructions.keys()):
                     Keap.instructions[line[2]] = {}
-                if line[5] == "": # no cond_index
-                    Keap.instructions[line[2]][f"{line[6]}"] = Utils.gen_kyte(line[0], line[1])
+                if line[5] == "":  # no cond_index
+                    Keap.instructions[line[2]][f"{line[6]}"] = Utils.gen_kyte(
+                        line[0], line[1]
+                    )
                 else:
-                    Keap.instructions[line[2]][f"{Keap.conditions[int(line[5])]} {line[6]}"] = Utils.gen_kyte(line[0], line[1])
+                    Keap.instructions[line[2]][
+                        f"{Keap.conditions[int(line[5])]} {line[6]}"
+                    ] = Utils.gen_kyte(line[0], line[1])
 
-            elif line[3] == "" and not line[4] == "": # no reg1 but has reg2
+            elif line[3] == "" and not line[4] == "":  # no reg1 but has reg2
                 pass
-            elif not line[3] == "" and line[4] == "": # has reg1 but no reg2
+            elif not line[3] == "" and line[4] == "":  # has reg1 but no reg2
                 if not line[2] in list(Keap.instructions.keys()):
                     Keap.instructions[line[2]] = {}
-                Keap.instructions[line[2]][f"r{line[3]}"] = Utils.gen_kyte(line[0], line[1])
-            else: # has reg1 and has reg2
+                Keap.instructions[line[2]][f"r{line[3]}"] = Utils.gen_kyte(
+                    line[0], line[1]
+                )
+            else:  # has reg1 and has reg2
                 if not line[2] in list(Keap.instructions.keys()):
                     Keap.instructions[line[2]] = {}
-                Keap.instructions[line[2]][f"r{line[3]} r{line[4]}"] = Utils.gen_kyte(line[0], line[1])
-
-        
+                Keap.instructions[line[2]][f"r{line[3]} r{line[4]}"] = Utils.gen_kyte(
+                    line[0], line[1]
+                )
 
 
 class ASM:
@@ -66,20 +76,15 @@ class ASM:
                 if not line.rstrip() == "":
                     ASM.lines.append(line.rstrip())
 
-        tmp_lines = []
-        for line in ASM.lines:
-            if not line == "" and not line.startswith(";"):
-                tmp_lines.append(line)
+        for i, line in enumerate(ASM.lines):
+            if line == "" or ";" in line:
+                continue
 
-        ASM.lines = tmp_lines
-
-        for line in ASM.lines:
-            toks = line.split(" ", 1) # ["uadd", "r0 r0"]
+            toks = line.split(" ", 1)  # ["uadd", "r0 r0"]
             if len(toks) == 2:
                 ASM.program.append(Keap.instructions[toks[0]][toks[1]])
             else:
                 ASM.program.append(Keap.instructions[toks[0]][""])
-
 
 
 class KPU:
@@ -87,38 +92,42 @@ class KPU:
     _start_index = 0
     _lines = []
 
-    _world = [["." for _ in range(map_size)]for _ in range(map_size)]
+    _world = [["." for _ in range(map_size)] for _ in range(map_size)]
     world = []
 
     def prepare_world():
-        if len(ASM.program) > 120:
+        if len(ASM.program) > max_prog_len:
             print(f"Program too long ({len(ASM.program)})")
             exit()
         for i, prg in enumerate(ASM.program):
-            x = i%map_size
-            y = int(i/map_size)*3 + 4
-            #print(prg, x, y)
+            x = i % map_size
+            y = int(i / map_size) * 3 + 4
+            # print(prg, x, y)
             for o in range(len(prg)):
-                KPU._world[y-o][x] = str(prg[o])
-        
+                KPU._world[y - o][x] = str(prg[o])
+
         for y in range(map_size):
             KPU.world.append("".join(KPU._world[y]))
 
     def write():
         with open(KPU.file, "r") as f:
             KPU._lines = f.readlines()
-        
+
         for i, line in enumerate(KPU._lines):
-            if line.rstrip().lstrip() == "Definice města:" or line.rstrip().lstrip() == "Map definition:":
+            if (
+                line.rstrip().lstrip() == "Definice města:"
+                or line.rstrip().lstrip() == "Map definition:"
+            ):
                 KPU._start_index = i + 1
                 break
-        
 
-        #print(KPU._start_index)
-        
+        # print(KPU._start_index)
+
         for _ in range(len(KPU._lines) - KPU._start_index):
             KPU._lines.pop()
-        
+
+        KPU._lines[-5] = KPU._lines[-5].replace("20", str(map_size))
+
         with open(KPU.file, "w") as f:
             for line in KPU._lines:
                 f.write(line)
@@ -143,5 +152,5 @@ print(f"KPU file: {KPU.file}")
 Keap.read_file()
 ASM.run()
 KPU.prepare_world()
-#pprint(KPU.world)
+# pprint(KPU.world)
 KPU.write()
